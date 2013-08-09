@@ -1,0 +1,8 @@
+function data = open_emg1(filename)
+    fid = fscanf(filename);
+    str = '';
+    while ~isempty(strfind(str,'[Taxa de amostragem'))
+        str = fgetl(fid);
+    end
+    ind = strfind(str, '=');
+    Fs = str2num(str(ind(1)+1:end)

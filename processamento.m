@@ -1,25 +1,29 @@
-function dados = processamento(janelas)
+function dados = processamento(janelas,bar)
+if nargin == 1
+    bar = waitbar(0);
+end
 L = length(janelas);
 dados = struct;
 base1 = cria_base({[]});
 dados.amplitude = struct('bsp_mav', base1, 'bsp_mavfd', base1, 'bsp_mavsd', base1, 'bsp_peak', base1, 'bsp_rms', base1);
 base2 = cria_base({[],2,0.15*std(janelas{1})});
-dados.entropy = struct('bsp_ap_en', base2, 'bsp_fuz_en', base2, 'bsp_sam_en', base2, 'bsp_shan_en', cria_base({[],1}), 'bsp_spec_en', cria_base({[],1,2000}));
-dados.frequency = struct('bw', cria_base({[],2000,1},'bsp_bandwidth'),'fmed', cria_base({[],2000,2},'bsp_bandwidth'),'fmode', cria_base({[],2000,3},'bsp_bandwidth'),'fmean', cria_base({[],2000,4},'bsp_bandwidth'),'bsp_zc',base1);
-dados.similarity = struct('bsp_cohe',cria_base({[],[],2000},[],@(x)(median(abs(x)))), 'bsp_corr', cria_base({[],[]}), 'bsp_mi', cria_base({[],[]}));
-dados.stationarity = struct('me', cria_base({[],0.01,2000,1},'bsp_stat_sd',@(x)(std(x))), 'sd', cria_base({[],0.01,2000,2},'bsp_stat_sd',@(x)(std(x))), 'ds', cria_base({[],0.01,2000,3},'bsp_stat_sd',@(x)(median(x))));
-dados.variability = struct('bsp_interq_range', base1, 'bsp_range', base1, 'bsp_std', base1, 'bsp_var', base1);
+%dados.entropy = struct('bsp_ap_en', base2, 'bsp_fuz_en', base2, 'bsp_sam_en', base2, 'bsp_shan_en', cria_base({[],1}), 'bsp_spec_en', cria_base({[],1,2000}));
+%dados.frequency = struct('bw', cria_base({[],2000,1},'bsp_bandwidth'),'fmed', cria_base({[],2000,2},'bsp_bandwidth'),'fmode', cria_base({[],2000,3},'bsp_bandwidth'),'fmean', cria_base({[],2000,4},'bsp_bandwidth'),'bsp_zc',base1);
+%dados.similarity = struct('bsp_cohe',cria_base({[],[],2000},[],@(x)(median(abs(x)))), 'bsp_corr', cria_base({[],[]}), 'bsp_mi', cria_base({[],[]}));
+%dados.stationarity = struct('me', cria_base({[],0.01,2000,1},'bsp_stat_sd',@(x)(std(x))), 'sd', cria_base({[],0.01,2000,2},'bsp_stat_sd',@(x)(std(x))), 'ds', cria_base({[],0.01,2000,3},'bsp_stat_sd',@(x)(median(x))));
+%dados.variability = struct('bsp_interq_range', base1, 'bsp_range', base1, 'bsp_std', base1, 'bsp_var', base1);
 base3 = cria_base({[],2},[],@(x)(x(end)));
-dados.linearity = struct('bsp_lag_dependence', base3, 'bsp_parlag_dependence', base3);
+%dados.linearity = struct('bsp_lag_dependence', base3, 'bsp_parlag_dependence', base3);
 for i = 1:L
     janela = janelas{i};
     dados.amplitude = executa_struct(dados.amplitude,janela);
-    dados.entropy = executa_struct(dados.entropy, janela);
-    dados.frequency = executa_struct(dados.frequency, janela);
+    %dados.entropy = executa_struct(dados.entropy, janela);
+    %dados.frequency = executa_struct(dados.frequency, janela);
     if i > 1
-        dados.similarity = executa_struct(dados.similarity, janela, janelas{i-1});
+        %dados.similarity = executa_struct(dados.similarity, janela, janelas{i-1});
     end
-    dados.stationarity = executa_struct(dados.stationarity, janela);
-    dados.variability = executa_struct(dados.variability, janela);
-    dados.linearity = executa_struct(dados.linearity, janela);
+    %dados.stationarity = executa_struct(dados.stationarity, janela);
+    %dados.variability = executa_struct(dados.variability, janela);
+    %dados.linearity = executa_struct(dados.linearity, janela);
+    waitbar(i/L,bar);
 end

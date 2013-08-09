@@ -1,0 +1,7 @@
+function struc = create_tab_struct(elements)
+struc = struct;
+for i = 2:2:length(elements)
+    struc.(['opcao' num2str(i-1)]) = struct;
+    sturc.(['opcao' num2str(i-1)]).botao = elements{i-1};
+    sturc.(['opcao' num2str(i-1)]).botao = elements{i-1};
+end

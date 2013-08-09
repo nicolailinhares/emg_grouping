@@ -1,0 +1,4 @@
+function [data Fs] = open_force1(filename)
+
+fid = 
+

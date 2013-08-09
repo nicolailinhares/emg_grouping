@@ -1,0 +1,12 @@
+function reset_interface(handles)
+
+disable = {'button_tab2','off','button_tab3','off','process_button','on'};
+group = {disable};
+properties = {'Enable'};
+
+for i = 1:length(group)
+    subgroup = group{i};
+    for j = 1:length(subgroup)
+        elem = subgroup{2*i - 1};
+        value = subgroup{2*i};
+        set(handles.
