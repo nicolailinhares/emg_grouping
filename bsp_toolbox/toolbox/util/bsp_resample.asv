@@ -1,0 +1,5 @@
+function y = bsp_resample(signal, Fs, new_Fs)
+
+ratio = Fs/new_Fs;
+
+for 1:

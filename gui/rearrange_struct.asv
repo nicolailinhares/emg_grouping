@@ -1,0 +1,8 @@
+function arrange = rearrange_struct(parent, children)
+parent_names = fieldnames(parent);
+for i = 1:length(parent_names)
+    inds = parent(parent_names{i});
+    for j = inds(1):inds(2)
+    end
+    
+end

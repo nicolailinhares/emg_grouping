@@ -1,4 +1,7 @@
 function dados = processamento(janelas,bar)
+if nargin == 1
+    bar = waitbar(0);
+end
 L = length(janelas);
 dados = struct;
 base1 = cria_base({[]});
@@ -16,10 +19,11 @@ for i = 1:L
     dados.amplitude = executa_struct(dados.amplitude,janela);
     dados.entropy = executa_struct(dados.entropy, janela);
     dados.frequency = executa_struct(dados.frequency, janela);
-    if i > 1
+    if i > 1 
         dados.similarity = executa_struct(dados.similarity, janela, janelas{i-1});
     end
     dados.stationarity = executa_struct(dados.stationarity, janela);
     dados.variability = executa_struct(dados.variability, janela);
     dados.linearity = executa_struct(dados.linearity, janela);
+    waitbar(i/L,bar);
 end
