@@ -1,11 +1,10 @@
-function ativacao_grupos = group_sinal(sinal_janelado,grupos,n,Fs,tar_axes)
+function ativacao_grupos = group_sinal(sinal_janelado,grupos,n,tar_axes)
 
 for i = 1:length(grupos)
     eixox = [];
     eixoy = [];
     degrau = [];
     indice = 1;
-    anterior = -2*n;
     for j = 1:length(grupos{i})
         inicio = (grupos{i}(j)-1)*n;
         eixox(indice:indice+n-1) = inicio:(inicio+n-1);
@@ -18,15 +17,15 @@ for i = 1:length(grupos)
         active(end) = 0;
         degrau(indice:indice+n-1) = active;
         indice = indice+n;
-        if inicio/n - anterior/n == 1
-            degrau(indice - n - 1:indice - n) = [1 1];
-        end
         anterior = inicio;
+        if inicio - anterior == 1
+            
+        end
     end
-    parametros{3*i - 2} = eixox*1/Fs;
+    parametros{3*i - 2} = eixox;
     parametros{3*i - 1} = eixoy;
     parametros{3*i} = '*';
-    ativacao_grupos{2*i-1} = eixox*1/Fs;
+    ativacao_grupos{2*i-1} = eixox;
     ativacao_grupos{2*i} = degrau;
 end
 if nargin > 3

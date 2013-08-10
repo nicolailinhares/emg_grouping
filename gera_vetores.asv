@@ -1,16 +1,16 @@
 function [vetores nomes] = gera_vetores(dados, descricao)
+dados
 if nargin > 1
-    dados_temp = struct;
     cont = 1;
     for i = 1:length(descricao)/2
         pai = descricao{2*i -1};
         filhos = descricao{2*i};
         for j = 1:length(filhos)
-            dados_temp.(pai).(filhos{j}).dados = dados.(pai).(filhos{j}).dados;
+            carac_cell{cont} = feature_set.(pai).(filhos{j}).dados;
+            legenda{cont + 1} = filhos{j};
             cont = cont + 1;
         end
     end
-    dados = dados_temp;
 end
 campos = fieldnames(dados);
 cont = 1;

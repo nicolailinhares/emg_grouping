@@ -22,7 +22,7 @@ function varargout = emg_grouping_gui(varargin)
 
 % Edit the above text to modify the response to help emg_grouping_gui
 
-% Last Modified by GUIDE v2.5 09-Aug-2013 19:45:59
+% Last Modified by GUIDE v2.5 10-Aug-2013 13:28:38
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -80,16 +80,16 @@ features_struct = struct('mav_menu', add_field(st1,'feat','bsp_mav'), ...
  'bw_menu', add_field(st2,'feat','bw'), 'fmed_menu', add_field(st2,'feat','fmed'), ...
  'fmean_menu', add_field(st2,'feat','fmean'), 'fmode_menu', add_field(st2,'feat','fmode'), ...
  'zc_menu', add_field(st2,'feat','bsp_zc'), ...
- 'ap_en_menu', add_field(st2,'feat','bsp_ap_en'), 'sam_en_menu', add_field(st2,'feat','bsp_sam_en'), ...
- 'fuz_en_menu', add_field(st2,'feat','bsp_fuz_en'), 'shan_en_menu', add_field(st2,'feat','bsp_fuz_en'), ...
- 'spec_en_menu', add_field(st2,'feat','bsp_spec_en'), ...
- 'lag_dependence_menu', add_field(st2,'feat','bsp_lag_dependence'), 'parlag_dependence_menu', add_field(st2,'feat','bsp_parlag_dependence'), ...
- 'me_menu', add_field(st2,'feat','me'), 'fmode_menu', add_field(st2,'feat','fmode'), ...
- 'zc_menu', add_field(st2,'feat','bsp_zc'), ...
- 'fmean_menu', add_field(st2,'feat','fmean'), 'fmode_menu', add_field(st2,'feat','fmode'), ...
- 'zc_menu', add_field(st2,'feat','bsp_zc'), ...
- 'bw_menu', add_field(st2,'feat','bw'), 'fmed_menu', add_field(st2,'feat','fmed'), ...
- 'fmean_menu', add_field(st2,'feat','fmean'), 'fmode_menu', add_field(st2,'feat','fmode'));
+ 'ap_en_menu', add_field(st3,'feat','bsp_ap_en'), 'sam_en_menu', add_field(st3,'feat','bsp_sam_en'), ...
+ 'fuz_en_menu', add_field(st3,'feat','bsp_fuz_en'), 'shan_en_menu', add_field(st3,'feat','bsp_fuz_en'), ...
+ 'spec_en_menu', add_field(st3,'feat','bsp_spec_en'), ...
+ 'lag_dependence_menu', add_field(st4,'feat','bsp_lag_dependence'), 'parlag_dependence_menu', add_field(st4,'feat','bsp_parlag_dependence'), ...
+ 'me_menu', add_field(st5,'feat','me'), 'sd_menu', add_field(st5,'feat','sd'), ...
+ 'ds_menu', add_field(st5,'feat','ds'), ...
+ 'cohe_menu', add_field(st6,'feat','bsp_cohe'), 'corr_menu', add_field(st6,'feat','bsp_corr'), ...
+ 'mi_menu', add_field(st6,'feat','bsp_mi'), ...
+ 'var_menu', add_field(st7,'feat','bsp_var'), 'std_menu', add_field(st2,'feat','bsp_std'), ...
+ 'interq_range_menu', add_field(st7,'feat','bsp_interq_range'), 'range_menu', add_field(st7,'feat','bsp_range'));
 tab_struct = create_tab_struct({handles.button_tab1, handles.panel_tab1, handles.button_tab2, handles.panel_tab2, handles.button_tab3, handles.panel_tab3});
 
 % --- Outputs from this function are returned to the command line.
@@ -131,7 +131,7 @@ function save_analysis_Callback(hObject, eventdata, handles)
 % hObject    handle to save_analysis (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+global emg_data selected_chan emg_features force_data
 
 % --------------------------------------------------------------------
 function exit_Callback(hObject, eventdata, handles)
@@ -182,18 +182,18 @@ change_tab(hObject,tab_struct);
 
 
 
-function number_clusters_Callback(hObject, eventdata, handles)
-% hObject    handle to number_clusters (see GCBO)
+function number_cluesters_Callback(hObject, eventdata, handles)
+% hObject    handle to number_cluesters (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of number_clusters as text
-%        str2double(get(hObject,'String')) returns contents of number_clusters as a double
+% Hints: get(hObject,'String') returns contents of number_cluesters as text
+%        str2double(get(hObject,'String')) returns contents of number_cluesters as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function number_clusters_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to number_clusters (see GCBO)
+function number_cluesters_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to number_cluesters (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -209,14 +209,36 @@ function cluester_button_Callback(hObject, eventdata, handles)
 % hObject    handle to cluester_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+global features_parent_struct features_struct emg_jan emg_Fs emg_features emg_data selected_chan
 
+arrange = rearrange_struct(features_parent_struct, features_struct);
+[vetores nomes] = gera_vetores(emg_features, arrange);
+plot(handles.features_axes,vetores');
+legend(handles.features_axes,nomes{:});
+q_c = str2double(get(handles.number_cluesters,'String'));
+q_epochs = str2double(get(handles.number_epochs,'String'));
+window = str2double(get(handles.window_edit,'String'));
+mapa = som(vetores,q_c,q_epochs,handles.map_axes);
+grupos = plot_map(mapa,vetores,handles.map_axes);
+ativacao = group_sinal(emg_jan,grupos,(window/1000)*emg_Fs,emg_Fs,handles.grouped_signal_axes);
+set(handles.button_tab3,'Enable', 'on');
+L = length(ativacao)/2;
+hs(1) = subplot(L+1,1,1,'Parent',handles.panel_tab3, 'Units', 'normalized');
+plot(emg_data(1,:),emg_data(selected_chan,:));
+for i = 1:L
+    hs(i+1) = subplot(L+1,1,i+1);
+    plot([0 ativacao{2*i-1} (length(emg_data(selected_chan,:))*1/emg_Fs)], [0 ativacao{2*i} 0]);
+    xlim([-0.5 (length(emg_data(selected_chan,:))*1/emg_Fs)]);
+    ylim([-0.5 1.5]);
+end
+linkaxes(hs, 'x');
 
 % --- Executes on button press in process_button.
 function process_button_Callback(hObject, eventdata, handles)
 % hObject    handle to process_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global emg_data selected_chan emg_Fs emg_features features_parent_struct features_struct
+global emg_data selected_chan emg_Fs emg_features features_parent_struct features_struct emg_jan
 window = str2double(get(handles.window_edit,'String'));
 emg_jan = bsp_vector_split(emg_data(selected_chan,1:end-1), (window/1000)*emg_Fs);
 bar = waitbar(0);
@@ -230,6 +252,7 @@ for i = 1:length(children_names)
     set(handles.(children_names{i}),'Enable','on');
 end
 set(handles.feature_check, 'Enable', 'on');
+set(handles.button_tab2, 'Enable', 'on');
 close(bar);
 
 function window_edit_Callback(hObject, eventdata, handles)
@@ -345,3 +368,26 @@ global features_parent_struct features_struct emg_data emg_Fs emg_features
 arrange = rearrange_struct(features_parent_struct, features_struct);
 window = str2double(get(handles.window_edit,'String'));
 show_data(emg_data(1,:), emg_data(2,:), emg_Fs, emg_features, (window/1000)*emg_Fs, arrange, handles.emg_axes);
+
+
+
+function number_epochs_Callback(hObject, eventdata, handles)
+% hObject    handle to number_epochs (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of number_epochs as text
+%        str2double(get(hObject,'String')) returns contents of number_epochs as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function number_epochs_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to number_epochs (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
