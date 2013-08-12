@@ -1,4 +1,4 @@
-function reset_interface(handles,features_parent_struct, features_struct)
+function reset_interface(handles)
 cla;
 disable = {'button_tab2','off','button_tab3','off', 'process_button', 'off', 'feature_check', 'off', 'save_analysis', 'off'};
 group = {disable};
@@ -14,7 +14,7 @@ for i = 1:length(group)
 end
 
 for i = 1:length(eixos)
-    cla(handles.(eixos{i}));
+    cla(eixos{i});
 end
 
 parent_names = fieldnames(features_parent_struct);
@@ -25,5 +25,5 @@ for i = 1:length(parent_names)
 end
 for i = 1:length(children_names)
     set(handles.(children_names{i}),'Enable','off');
-    set(handles.(children_names{i}),'Value',0);
+    set(handles.(children_names{i}),'Enable','off');
 end
